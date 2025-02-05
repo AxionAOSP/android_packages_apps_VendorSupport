@@ -55,7 +55,7 @@ class AvatarHomePagePreference @JvmOverloads constructor(
 
     init {
         setLayoutResource(R.layout.homepage_preference_user_v2)
-        isVisible = getSearchBarStyle() == 1
+        isVisible = true
     }
 
     private fun getSearchBarStyle(): Int {
