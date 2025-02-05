@@ -18,10 +18,15 @@ package com.android.settings.utils
 import android.content.Context
 import android.os.Environment
 import android.os.StatFs
+import android.os.SystemProperties
 import android.hardware.display.DisplayManager
 import android.view.Display
+import android.hardware.camera2.CameraCharacteristics
+import android.hardware.camera2.CameraManager
+
 import com.android.internal.os.PowerProfile
 import com.android.internal.util.MemInfoReader
+
 import kotlin.math.ceil
 import kotlin.math.roundToInt
 
@@ -80,4 +85,71 @@ object DeviceInfoUtil {
         return "${width} x ${height}"
     }
 
+    fun getFrontCameraMegapixels(context: Context): String {
+        val frontCameraInfo = SystemProperties.get("persist.sys.device_camera_info_front", null)
+        if (!frontCameraInfo.isNullOrEmpty()) {
+            return "Front $frontCameraInfo MP"
+        }
+
+        val cameraManager = context.getSystemService(Context.CAMERA_SERVICE) as CameraManager
+        val cameraIdList = cameraManager.cameraIdList
+
+        for (cameraId in cameraIdList) {
+            val characteristics = cameraManager.getCameraCharacteristics(cameraId)
+            val facing = characteristics.get(CameraCharacteristics.LENS_FACING)
+
+            if (facing != null && facing == CameraCharacteristics.LENS_FACING_FRONT) {
+                val megapixels = getCameraMegapixels(characteristics)
+                val formattedMp = formatMegapixels(megapixels)
+                return "Front $formattedMp"
+            }
+        }
+
+        return "Unknown"
+    }
+
+    fun getRearCameraMegapixels(context: Context): String {
+        val rearCameraInfo = SystemProperties.get("persist.sys.device_camera_info_rear", null)
+        if (!rearCameraInfo.isNullOrEmpty()) {
+            val rearMegapixels = rearCameraInfo.split(",").joinToString(" + ") { "$it MP" }
+            return "Rear $rearMegapixels"
+        }
+        val cameraManager = context.getSystemService(Context.CAMERA_SERVICE) as CameraManager
+        val cameraIdList = cameraManager.cameraIdList
+        val rearMegapixelsList = mutableListOf<String>()
+
+        for (cameraId in cameraIdList) {
+            val characteristics = cameraManager.getCameraCharacteristics(cameraId)
+            val facing = characteristics.get(CameraCharacteristics.LENS_FACING)
+
+            if (facing != null && facing == CameraCharacteristics.LENS_FACING_BACK) {
+                val megapixels = getCameraMegapixels(characteristics)
+                val formattedMp = formatMegapixels(megapixels)
+                rearMegapixelsList.add(formattedMp)
+            }
+        }
+
+        return if (rearMegapixelsList.isNotEmpty()) {
+            "Rear ${rearMegapixelsList.joinToString(" + ")}"
+        } else {
+            "Unknown"
+        }
+    }
+
+    private fun getCameraMegapixels(characteristics: CameraCharacteristics): Double {
+        val sensorSize = characteristics.get(CameraCharacteristics.SENSOR_INFO_PIXEL_ARRAY_SIZE)
+        if (sensorSize != null) {
+            val totalPixels = sensorSize.width.toLong() * sensorSize.height.toLong()
+            return totalPixels.toDouble() / 1_000_000.0
+        }
+        return 0.0
+    }
+
+    private fun formatMegapixels(megapixels: Double): String {
+        return if (megapixels % 1.0 == 0.0) {
+            "${megapixels.toInt()}MP"
+        } else {
+            "%.1fMP".format(megapixels)
+        }
+    }
 }
