@@ -51,7 +51,8 @@ class ThemeStyleUtils(context: Context) {
             ),
             "hide_ime_space_style" to arrayOf(
                 "com.android.system.theme.hide_ime_space_narrow",
-                "com.android.system.theme.hide_ime_space_no_space"
+                "com.android.system.theme.hide_ime_space_no_space",
+                "com.android.system.theme.hide_ime_space_hidden"
             )
         )
     }
