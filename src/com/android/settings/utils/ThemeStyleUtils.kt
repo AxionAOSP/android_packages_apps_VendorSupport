@@ -2,6 +2,8 @@ package com.android.settings.utils
 
 import android.content.ContentResolver
 import android.content.Context
+import android.os.Handler
+import android.os.Looper
 import android.os.UserHandle
 import android.provider.Settings
 
@@ -12,6 +14,7 @@ class ThemeStyleUtils(context: Context) {
     private val themeUtils: ThemeUtils = ThemeUtils.getInstance(context)
     private val contentResolver: ContentResolver = context.contentResolver
     private val mContext: Context = context
+    private val handler = Handler(Looper.getMainLooper())
 
     companion object {
         private val OVERLAY_CATEGORIES = mapOf(
@@ -54,14 +57,16 @@ class ThemeStyleUtils(context: Context) {
     }
 
     fun updateThemeStyle(key: String, category: String, target: String, restartSystemUI: Boolean) {
-        val overlays = OVERLAY_CATEGORIES[key] ?: return
-        val style = Settings.System.getIntForUser(contentResolver, key, 0, UserHandle.USER_CURRENT)
-        themeUtils.setOverlayEnabled(category, target, target)
-        if (style in 1..overlays.size) {
-            themeUtils.setOverlayEnabled(category, overlays[style - 1], target)
-        }
-        if (restartSystemUI) {
-            SystemRestartUtils.restartSystemUI(mContext)
-        }
+        handler.postDelayed({
+            val overlays = OVERLAY_CATEGORIES[key] ?: return@postDelayed
+            val style = Settings.System.getIntForUser(contentResolver, key, 0, UserHandle.USER_CURRENT)
+            themeUtils.setOverlayEnabled(category, target, target)
+            if (style in 1..overlays.size) {
+                themeUtils.setOverlayEnabled(category, overlays[style - 1], target)
+            }
+            if (restartSystemUI) {
+                SystemRestartUtils.restartSystemUI(mContext)
+            }
+        }, 500)
     }
 }
