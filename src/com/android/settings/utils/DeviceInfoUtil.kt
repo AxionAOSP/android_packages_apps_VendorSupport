@@ -23,14 +23,31 @@ import android.hardware.display.DisplayManager
 import android.view.Display
 import android.hardware.camera2.CameraCharacteristics
 import android.hardware.camera2.CameraManager
+import android.os.storage.StorageManager
 
 import com.android.internal.os.PowerProfile
 import com.android.internal.util.MemInfoReader
+
+import com.android.settingslib.deviceinfo.PrivateStorageInfo
+import com.android.settingslib.deviceinfo.StorageManagerVolumeProvider
 
 import kotlin.math.ceil
 import kotlin.math.roundToInt
 
 object DeviceInfoUtil {
+
+    fun getProcessor(): String {
+        val model = SystemProperties.get("ro.product.model", "").lowercase()
+        val numberMatch = Regex("""\b(pixel\s*)(\d+)([a-z\s]*)\b""").find(model)
+        val number = numberMatch?.groups?.get(2)?.value?.toIntOrNull()
+        return when (number) {
+            6 -> "Google Tensor"
+            7 -> "Google Tensor G2"
+            8 -> "Google Tensor G3"
+            9 -> "Google Tensor G4"
+            else -> SystemProperties.get("persist.sys.axion_processor_info", "Unknown")
+        }
+    }
 
     fun getTotalRam(): String {
         val memInfoReader = MemInfoReader()
@@ -51,14 +68,45 @@ object DeviceInfoUtil {
     }
 
     fun getStorageTotal(context: Context): String {
-        val statFs = StatFs(Environment.getDataDirectory().path)
-        val totalStorageBytes = statFs.totalBytes
+        val storageManager = context.getSystemService(StorageManager::class.java)
+        val volumeProvider = StorageManagerVolumeProvider(storageManager)
+        val info = PrivateStorageInfo.getPrivateStorageInfo(volumeProvider)
+        val totalStorageBytes = info.totalBytes
         val totalStorageGB = totalStorageBytes / (1024.0 * 1024.0 * 1024.0)
         val roundedStorageGB = roundToNearestKnownStorageSize(totalStorageGB)
         return if (roundedStorageGB >= 1024) {
             "${roundedStorageGB / 1024} TB"
         } else {
             "$roundedStorageGB GB"
+        }
+    }
+
+    fun getStorageUsed(context: Context): String {
+        val storageManager = context.getSystemService(StorageManager::class.java)
+        val volumeProvider = StorageManagerVolumeProvider(storageManager)
+        val info = PrivateStorageInfo.getPrivateStorageInfo(volumeProvider)
+        val usedBytes = info.totalBytes - info.freeBytes
+        val usedGB = usedBytes / (1024.0 * 1024.0 * 1024.0)
+        val formattedUsedGB = String.format("%.1f", usedGB)
+
+        return if (usedGB >= 1024) {
+            val usedTB = usedGB / 1024
+            String.format("%.2f TB", usedTB)
+        } else {
+            "$formattedUsedGB GB"
+        }
+    }
+
+    fun getStorageAvailable(context: Context): String {
+        val storageManager = context.getSystemService(StorageManager::class.java)
+        val volumeProvider = StorageManagerVolumeProvider(storageManager)
+        val info = PrivateStorageInfo.getPrivateStorageInfo(volumeProvider)
+        val availableGB = info.freeBytes / (1024.0 * 1024.0 * 1024.0)
+        val roundedAvailableGB = availableGB.roundToInt()
+        return if (roundedAvailableGB >= 1024) {
+            "${roundedAvailableGB / 1024} TB"
+        } else {
+            "$roundedAvailableGB GB"
         }
     }
 
@@ -72,9 +120,36 @@ object DeviceInfoUtil {
     }
 
     fun getBatteryCapacity(context: Context): String {
-        val powerProfile = PowerProfile(context)
-        val batteryCapacity = powerProfile.getAveragePower(PowerProfile.POWER_BATTERY_CAPACITY).roundToInt().toString()
-        return "${batteryCapacity} mAh"
+        val model = SystemProperties.get("ro.product.model", "").lowercase()
+        val numberMatch = Regex("""\b(pixel\s*)(\d+)([a-z\s]*)\b""").find(model)
+        val number = numberMatch?.groups?.get(2)?.value?.toIntOrNull()
+        val variant = numberMatch?.groups?.get(3)?.value?.trim() ?: ""
+        val batteryCapacity = when (number) {
+            6 -> when {
+                variant.contains("pro") -> 5003
+                variant.contains("a") -> 4410
+                else -> 4614
+            }
+            7 -> when {
+                variant.contains("pro") -> 5000
+                variant.contains("a") -> 4385
+                else -> 4355
+            }
+            8 -> when {
+                variant.contains("pro") -> 5050
+                variant.contains("a") -> 4492
+                else -> 4575
+            }
+            9 -> when {
+                variant.contains("pro xl") -> 5060
+                variant.contains("pro") -> 4700
+                else -> 4700
+            }
+            else -> {
+                PowerProfile(context).getAveragePower(PowerProfile.POWER_BATTERY_CAPACITY).roundToInt()
+            }
+        }
+        return "$batteryCapacity mAh"
     }
 
     fun getScreenResolution(context: Context): String {
