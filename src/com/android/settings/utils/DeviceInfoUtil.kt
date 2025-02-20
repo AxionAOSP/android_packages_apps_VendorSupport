@@ -31,6 +31,8 @@ import com.android.internal.util.MemInfoReader
 import com.android.settingslib.deviceinfo.PrivateStorageInfo
 import com.android.settingslib.deviceinfo.StorageManagerVolumeProvider
 
+import java.util.Locale
+
 import kotlin.math.ceil
 import kotlin.math.roundToInt
 
@@ -89,13 +91,12 @@ object DeviceInfoUtil {
         val info = PrivateStorageInfo.getPrivateStorageInfo(volumeProvider)
         val usedBytes = info.totalBytes - info.freeBytes
         val usedGB = usedBytes / (1024.0 * 1024.0 * 1024.0)
-        val formattedUsedGB = String.format("%.1f", usedGB)
 
         return if (usedGB >= 1024) {
             val usedTB = usedGB / 1024
-            String.format("%.2f TB", usedTB)
+            String.format(Locale.US, "%.2f TB", usedTB)
         } else {
-            "$formattedUsedGB GB"
+            String.format(Locale.US, "%.1f GB", usedGB)
         }
     }
 
