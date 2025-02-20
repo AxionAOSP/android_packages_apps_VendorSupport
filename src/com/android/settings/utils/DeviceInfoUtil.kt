@@ -40,12 +40,14 @@ object DeviceInfoUtil {
         val model = SystemProperties.get("ro.product.model", "").lowercase()
         val numberMatch = Regex("""\b(pixel\s*)(\d+)([a-z\s]*)\b""").find(model)
         val number = numberMatch?.groups?.get(2)?.value?.toIntOrNull()
+
         return when (number) {
             6 -> "Google Tensor"
             7 -> "Google Tensor G2"
             8 -> "Google Tensor G3"
             9 -> "Google Tensor G4"
             else -> SystemProperties.get("persist.sys.axion_processor_info", "Unknown")
+                .replace("_", " ")
         }
     }
 
