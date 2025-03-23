@@ -16,61 +16,63 @@
 package com.android.settings.utils
 
 import android.content.Context
-import android.util.AttributeSet
 import android.content.Intent
 import android.os.SystemProperties
-import androidx.preference.Preference
+import android.util.AttributeSet
 import android.widget.Toast
+import androidx.preference.Preference
 
 class PlatlogoPreference(context: Context, attrs: AttributeSet) : Preference(context, attrs) {
-    private var clickCount = 0
-    private var lastClickTime = 0L
-    private var currentToast: Toast? = null 
+  private var clickCount = 0
+  private var lastClickTime = 0L
+  private var currentToast: Toast? = null
 
-    init {
-        val lineageVersion = SystemProperties.get("ro.lineage.version", "Unknown Version")
-        summary = "$lineageVersion"
+  init {
+    val lineageVersion = SystemProperties.get("ro.lineage.version", "Unknown Version")
+    summary = "$lineageVersion"
 
-        onPreferenceClickListener = Preference.OnPreferenceClickListener {
-            val currentTime = System.currentTimeMillis()
+    onPreferenceClickListener =
+      Preference.OnPreferenceClickListener {
+        val currentTime = System.currentTimeMillis()
 
-            if (currentTime - lastClickTime > 1500) {
-                clickCount = 0
-            }
-
-            clickCount++
-            lastClickTime = currentTime
-
-            showToastForTapCount(clickCount)
-
-            if (clickCount == 6) {
-                showToast("Welcome to RisingOS!")
-                val intent = Intent(context, PlatLogoActivity::class.java)
-                context.startActivity(intent)
-                clickCount = 0
-            }
-
-            true
+        if (currentTime - lastClickTime > 1500) {
+          clickCount = 0
         }
-    }
 
-    private fun showToastForTapCount(count: Int) {
-        val message = when (count) {
-            1 -> "Curiosity killed the cat."
-            2 -> "Congratulations, you are now a developer. You can stop now."
-            3 -> "Increasing FPS in games... Boop, okay, please stop now."
-            4 -> "Are you an engineer performing a stress test?"
-            5 -> "Okay."
-            else -> null
-        }
-        message?.let { 
-            currentToast?.cancel()
-            showToast(it) 
-        }
-    }
+        clickCount++
+        lastClickTime = currentTime
 
-    private fun showToast(message: String) {
-        currentToast = Toast.makeText(context, message, Toast.LENGTH_SHORT)
-        currentToast?.show()
+        showToastForTapCount(clickCount)
+
+        if (clickCount == 6) {
+          showToast("Welcome to RisingOS!")
+          val intent = Intent(context, PlatLogoActivity::class.java)
+          context.startActivity(intent)
+          clickCount = 0
+        }
+
+        true
+      }
+  }
+
+  private fun showToastForTapCount(count: Int) {
+    val message =
+      when (count) {
+        1 -> "Curiosity killed the cat."
+        2 -> "Congratulations, you are now a developer. You can stop now."
+        3 -> "Increasing FPS in games... Boop, okay, please stop now."
+        4 -> "Are you an engineer performing a stress test?"
+        5 -> "Okay."
+        else -> null
+      }
+    message?.let {
+      currentToast?.cancel()
+      showToast(it)
     }
+  }
+
+  private fun showToast(message: String) {
+    currentToast = Toast.makeText(context, message, Toast.LENGTH_SHORT)
+    currentToast?.show()
+  }
 }

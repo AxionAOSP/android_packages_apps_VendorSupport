@@ -24,28 +24,26 @@ import com.android.settingslib.widget.LayoutPreference
 
 class HighlightPrefUtils {
 
-    companion object {
-        private const val PACKAGE_NAME = "com.android.settings"
-        private const val ACTIVITY_PREFIX = ".Settings\$"
+  companion object {
+    private const val PACKAGE_NAME = "com.android.settings"
+    private const val ACTIVITY_PREFIX = ".Settings\$"
 
-        fun setupHighlightPref(
-            context: Context,
-            layoutPreference: LayoutPreference,
-            tiles: Map<Int, String>
-        ) {
-            tiles.forEach { (viewId, activityName) ->
-                val view = layoutPreference.findViewById<View>(viewId)
-                view?.setOnClickListener {
-                    launchActivity(context, activityName)
-                }
-            }
-        }
-
-        private fun launchActivity(context: Context, activityName: String) {
-            val intent = Intent().setComponent(
-                ComponentName(PACKAGE_NAME, "$PACKAGE_NAME$ACTIVITY_PREFIX$activityName")
-            )
-            context.startActivity(intent)
-        }
+    fun setupHighlightPref(
+      context: Context,
+      layoutPreference: LayoutPreference,
+      tiles: Map<Int, String>,
+    ) {
+      tiles.forEach { (viewId, activityName) ->
+        val view = layoutPreference.findViewById<View>(viewId)
+        view?.setOnClickListener { launchActivity(context, activityName) }
+      }
     }
+
+    private fun launchActivity(context: Context, activityName: String) {
+      val intent =
+        Intent()
+          .setComponent(ComponentName(PACKAGE_NAME, "$PACKAGE_NAME$ACTIVITY_PREFIX$activityName"))
+      context.startActivity(intent)
+    }
+  }
 }

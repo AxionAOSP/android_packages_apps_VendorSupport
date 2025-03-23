@@ -18,26 +18,25 @@ package com.android.settings.utils
 
 import android.content.Context
 import android.os.UserManager
-
 import com.android.settingslib.RestrictedLockUtilsInternal
 import com.android.settingslib.Utils
 
 object NetworkUtils {
 
-    @JvmStatic
-    fun isNetworkAvailable(context: Context): Boolean {
-        return !isUserRestricted(context) && !Utils.isWifiOnly(context)
-    }
+  @JvmStatic
+  fun isNetworkAvailable(context: Context): Boolean {
+    return !isUserRestricted(context) && !Utils.isWifiOnly(context)
+  }
 
-    @JvmStatic
-    private fun isUserRestricted(context: Context): Boolean {
-        val userManager = context.getSystemService(Context.USER_SERVICE) as UserManager
-        val isSecondaryUser = !userManager.isAdminUser
-        return isSecondaryUser ||
-            RestrictedLockUtilsInternal.hasBaseUserRestriction(
-                context,
-                UserManager.DISALLOW_CONFIG_MOBILE_NETWORKS,
-                android.os.Process.myUserHandle().identifier
-            )
-    }
+  @JvmStatic
+  private fun isUserRestricted(context: Context): Boolean {
+    val userManager = context.getSystemService(Context.USER_SERVICE) as UserManager
+    val isSecondaryUser = !userManager.isAdminUser
+    return isSecondaryUser ||
+      RestrictedLockUtilsInternal.hasBaseUserRestriction(
+        context,
+        UserManager.DISALLOW_CONFIG_MOBILE_NETWORKS,
+        android.os.Process.myUserHandle().identifier,
+      )
+  }
 }

@@ -28,72 +28,70 @@ import android.widget.ImageView
 import androidx.core.content.res.use
 import com.android.settings.R
 
-open class WallpaperView @JvmOverloads constructor(
-    context: Context,
-    attrs: AttributeSet? = null,
-    defStyleAttr: Int = 0
-) : ImageView(context, attrs, defStyleAttr) {
+open class WallpaperView
+@JvmOverloads
+constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0) :
+  ImageView(context, attrs, defStyleAttr) {
 
-    private val handler = Handler(Looper.getMainLooper())
-    private var currentWallpaperDrawable: Drawable? = null
-    private var isBlurred: Boolean = false
-    private var dimLevel: Int = 0
+  private val handler = Handler(Looper.getMainLooper())
+  private var currentWallpaperDrawable: Drawable? = null
+  private var isBlurred: Boolean = false
+  private var dimLevel: Int = 0
 
-    private val wallpaperChecker = object : Runnable {
-        override fun run() {
-            setWallpaperPreview()
-            handler.postDelayed(this, 2000)
-        }
-    }
-
-    init {
-        context.theme.obtainStyledAttributes(attrs, R.styleable.WallpaperView, 0, 0).use {
-            isBlurred = it.getBoolean(R.styleable.WallpaperView_blurred, false)
-            dimLevel = it.getInt(R.styleable.WallpaperView_dimLevel, 0).coerceIn(0, 100)
-        }
+  private val wallpaperChecker =
+    object : Runnable {
+      override fun run() {
         setWallpaperPreview()
-        handler.postDelayed(wallpaperChecker, 2000)
+        handler.postDelayed(this, 2000)
+      }
     }
 
-    protected open fun updateWallpaper() {
-        val wallpaperManager = WallpaperManager.getInstance(context)
-        val wallpaperDrawable: Drawable? = wallpaperManager.drawable
-
-        if (wallpaperDrawable != currentWallpaperDrawable) {
-            currentWallpaperDrawable = wallpaperDrawable
-            wallpaperDrawable?.let {
-                setImageDrawable(it)
-                applyBlurEffect()
-                applyDimEffect()
-            }
-        }
+  init {
+    context.theme.obtainStyledAttributes(attrs, R.styleable.WallpaperView, 0, 0).use {
+      isBlurred = it.getBoolean(R.styleable.WallpaperView_blurred, false)
+      dimLevel = it.getInt(R.styleable.WallpaperView_dimLevel, 0).coerceIn(0, 100)
     }
+    setWallpaperPreview()
+    handler.postDelayed(wallpaperChecker, 2000)
+  }
 
-    protected open fun setWallpaperPreview() {
-        updateWallpaper()
+  protected open fun updateWallpaper() {
+    val wallpaperManager = WallpaperManager.getInstance(context)
+    val wallpaperDrawable: Drawable? = wallpaperManager.drawable
+
+    if (wallpaperDrawable != currentWallpaperDrawable) {
+      currentWallpaperDrawable = wallpaperDrawable
+      wallpaperDrawable?.let {
+        setImageDrawable(it)
+        applyBlurEffect()
+        applyDimEffect()
+      }
     }
+  }
 
-    private fun applyBlurEffect() {
-        if (isBlurred) {
-            val blurEffect = RenderEffect.createBlurEffect(100f, 100f, Shader.TileMode.MIRROR)
-            setRenderEffect(blurEffect)
-        } else {
-            setRenderEffect(null)
-        }
+  protected open fun setWallpaperPreview() {
+    updateWallpaper()
+  }
+
+  private fun applyBlurEffect() {
+    if (isBlurred) {
+      val blurEffect = RenderEffect.createBlurEffect(100f, 100f, Shader.TileMode.MIRROR)
+      setRenderEffect(blurEffect)
+    } else {
+      setRenderEffect(null)
     }
+  }
 
-    private fun applyDimEffect() {
-        val brightness = 1.0f - (dimLevel / 100f)
+  private fun applyDimEffect() {
+    val brightness = 1.0f - (dimLevel / 100f)
 
-        val colorMatrix = ColorMatrix().apply {
-            setScale(brightness, brightness, brightness, 1.0f)
-        }
+    val colorMatrix = ColorMatrix().apply { setScale(brightness, brightness, brightness, 1.0f) }
 
-        colorFilter = ColorMatrixColorFilter(colorMatrix)
-    }
+    colorFilter = ColorMatrixColorFilter(colorMatrix)
+  }
 
-    override fun onDetachedFromWindow() {
-        super.onDetachedFromWindow()
-        handler.removeCallbacks(wallpaperChecker)
-    }
+  override fun onDetachedFromWindow() {
+    super.onDetachedFromWindow()
+    handler.removeCallbacks(wallpaperChecker)
+  }
 }

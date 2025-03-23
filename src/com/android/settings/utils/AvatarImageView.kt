@@ -20,48 +20,43 @@ import android.content.Context
 import android.graphics.drawable.Drawable
 import android.util.AttributeSet
 import android.widget.ImageView
-
-import com.android.settings.utils.UserUtils
-
 import kotlinx.coroutines.*
 
-class AvatarImageView @JvmOverloads constructor(
-    context: Context,
-    attrs: AttributeSet? = null,
-    defStyleAttr: Int = 0
-) : ImageView(context, attrs, defStyleAttr) {
+class AvatarImageView
+@JvmOverloads
+constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0) :
+  ImageView(context, attrs, defStyleAttr) {
 
-    private val updateIntervalMillis = 1000L
-    private var updateJob: Job? = null
-    private var currentAvatar: Drawable? = null
-    private val userUtils = UserUtils.getInstance(context)
+  private val updateIntervalMillis = 1000L
+  private var updateJob: Job? = null
+  private var currentAvatar: Drawable? = null
+  private val userUtils = UserUtils.getInstance(context)
 
-    init {
-        initJob()
-        userUtils.setClick(this)
-    }
+  init {
+    initJob()
+    userUtils.setClick(this)
+  }
 
-    private fun initJob() {
-        updateJob = CoroutineScope(Dispatchers.Main).launch {
-            while (isActive) {
-                updateAvatar()
-                delay(updateIntervalMillis)
-            }
+  private fun initJob() {
+    updateJob =
+      CoroutineScope(Dispatchers.Main).launch {
+        while (isActive) {
+          updateAvatar()
+          delay(updateIntervalMillis)
         }
-    }
+      }
+  }
 
-    private suspend fun updateAvatar() {
-        val newAvatar = withContext(Dispatchers.IO) {
-            userUtils.getCircularUserIcon()
-        }
-        if (newAvatar != currentAvatar) {
-            setImageDrawable(newAvatar)
-            currentAvatar = newAvatar
-        }
+  private suspend fun updateAvatar() {
+    val newAvatar = withContext(Dispatchers.IO) { userUtils.getCircularUserIcon() }
+    if (newAvatar != currentAvatar) {
+      setImageDrawable(newAvatar)
+      currentAvatar = newAvatar
     }
+  }
 
-    override fun onDetachedFromWindow() {
-        super.onDetachedFromWindow()
-        updateJob?.cancel()
-    }
+  override fun onDetachedFromWindow() {
+    super.onDetachedFromWindow()
+    updateJob?.cancel()
+  }
 }

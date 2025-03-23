@@ -30,100 +30,102 @@ import com.android.settings.R
 import com.android.settings.utils.UserUtils
 
 /** A customized layout for homepage preference. */
-class AvatarHomePagePreference @JvmOverloads constructor(
-    context: Context, 
-    attrs: AttributeSet? = null, 
-    defStyleAttr: Int = 0, 
-    defStyleRes: Int = 0
-) : HomepagePreference(context, attrs, defStyleAttr, defStyleRes), 
-    HomepagePreferenceLayoutHelper.HomepagePreferenceLayout {
+class AvatarHomePagePreference
+@JvmOverloads
+constructor(
+  context: Context,
+  attrs: AttributeSet? = null,
+  defStyleAttr: Int = 0,
+  defStyleRes: Int = 0,
+) :
+  HomepagePreference(context, attrs, defStyleAttr, defStyleRes),
+  HomepagePreferenceLayoutHelper.HomepagePreferenceLayout {
 
-    private var avatarIcon: ImageView? = null
-    private var userCard: View? = null
-    private val userUtils: UserUtils = UserUtils.getInstance(context)
+  private var avatarIcon: ImageView? = null
+  private var userCard: View? = null
+  private val userUtils: UserUtils = UserUtils.getInstance(context)
 
-    private val handler = Handler()
-    private val updateTileRunnable = object : Runnable {
-        override fun run() {
-            updateTile()
-            handler.postDelayed(this, 1000)
-        }
+  private val handler = Handler()
+  private val updateTileRunnable =
+    object : Runnable {
+      override fun run() {
+        updateTile()
+        handler.postDelayed(this, 1000)
+      }
     }
 
-    private var currentAvatarDrawable: Drawable? = null
-    private var isUpdatesRunning = false
+  private var currentAvatarDrawable: Drawable? = null
+  private var isUpdatesRunning = false
 
-    init {
-        setLayoutResource(R.layout.homepage_preference_user_v2)
-        isVisible = true
+  init {
+    setLayoutResource(R.layout.homepage_preference_user_v2)
+    isVisible = true
+  }
+
+  private fun getSearchBarStyle(): Int {
+    return Settings.System.getIntForUser(
+      context.contentResolver,
+      "search_bar_style",
+      0,
+      UserHandle.USER_CURRENT,
+    )
+  }
+
+  override fun onBindViewHolder(holder: PreferenceViewHolder) {
+    super.onBindViewHolder(holder)
+    if (!isVisible) return
+
+    avatarIcon = holder.findViewById(R.id.user_avatar) as ImageView
+    userCard = holder.findViewById(R.id.user_card_holder)
+
+    avatarIcon?.let { userUtils.setClick(it) }
+    userCard?.let { userUtils.setClick(it) }
+
+    holder.itemView.post {
+      val userName = userUtils.getUserName()
+      if (userName != null && userName != title) {
+        title = userName
+      }
     }
 
-    private fun getSearchBarStyle(): Int {
-        return Settings.System.getIntForUser(
-            context.contentResolver,
-            "search_bar_style",
-            0,
-            UserHandle.USER_CURRENT
-        )
+    if (!isUpdatesRunning) {
+      isUpdatesRunning = true
+      handler.post(updateTileRunnable)
     }
 
-    override fun onBindViewHolder(holder: PreferenceViewHolder) {
-        super.onBindViewHolder(holder)
-        if (!isVisible) return
+    holder.itemView.setOnClickListener {
+      val component =
+        ComponentName("com.android.settings", "com.android.settings.Settings\$UserSettingsActivity")
+      val intent = Intent().apply { this.component = component }
+      context.startActivity(intent)
+    }
+  }
 
-        avatarIcon = holder.findViewById(R.id.user_avatar) as ImageView
-        userCard = holder.findViewById(R.id.user_card_holder)
+  override fun getHelper(): HomepagePreferenceLayoutHelper? {
+    return null
+  }
 
-        avatarIcon?.let { userUtils.setClick(it) }
-        userCard?.let { userUtils.setClick(it) }
-
-        holder.itemView.post {
-            val userName = userUtils.getUserName()
-            if (userName != null && userName != title) {
-                title = userName
-            }
-        }
-
-        if (!isUpdatesRunning) {
-            isUpdatesRunning = true
-            handler.post(updateTileRunnable)
-        }
-
-        holder.itemView.setOnClickListener {
-            val component = ComponentName(
-                "com.android.settings",
-                "com.android.settings.Settings\$UserSettingsActivity"
-            )
-            val intent = Intent().apply { this.component = component }
-            context.startActivity(intent)
-        }
+  private fun updateTile() {
+    avatarIcon?.let {
+      val newAvatarDrawable = userUtils.getCircularUserIcon()
+      if (currentAvatarDrawable == null || currentAvatarDrawable != newAvatarDrawable) {
+        it.setImageDrawable(newAvatarDrawable)
+        currentAvatarDrawable = newAvatarDrawable
+      }
     }
 
-    override fun getHelper(): HomepagePreferenceLayoutHelper? {
-        return null
+    userUtils.getUserName()?.let { userName ->
+      if (userName != title) {
+        title = userName
+      }
     }
+  }
 
-    private fun updateTile() {
-        avatarIcon?.let {
-            val newAvatarDrawable = userUtils.getCircularUserIcon()
-            if (currentAvatarDrawable == null || currentAvatarDrawable != newAvatarDrawable) {
-                it.setImageDrawable(newAvatarDrawable)
-                currentAvatarDrawable = newAvatarDrawable
-            }
-        }
-
-        userUtils.getUserName()?.let { userName ->
-            if (userName != title) {
-                title = userName
-            }
-        }
+  override fun onPrepareForRemoval() {
+    super.onPrepareForRemoval()
+    if (isUpdatesRunning) {
+      isUpdatesRunning = false
+      handler.removeCallbacks(updateTileRunnable)
     }
-
-    override fun onPrepareForRemoval() {
-        super.onPrepareForRemoval()
-        if (isUpdatesRunning) {
-            isUpdatesRunning = false
-            handler.removeCallbacks(updateTileRunnable)
-        }
-    }
+  }
 }

@@ -16,42 +16,40 @@
 package com.android.settings.utils
 
 import android.content.Context
-import android.graphics.drawable.Drawable
 import android.util.AttributeSet
 import kotlin.random.Random
 
 class BannerView : WallpaperView {
 
-    private val bannerProbability = 0.9
+  private val bannerProbability = 0.9
 
-    constructor(context: Context) : super(context) {}
+  constructor(context: Context) : super(context) {}
 
-    constructor(context: Context, attrs: AttributeSet?) : super(context, attrs) {}
+  constructor(context: Context, attrs: AttributeSet?) : super(context, attrs) {}
 
-    constructor(context: Context, attrs: AttributeSet?, defStyleAttr: Int) : super(
-        context,
-        attrs,
-        defStyleAttr
-    ) {}
+  constructor(
+    context: Context,
+    attrs: AttributeSet?,
+    defStyleAttr: Int,
+  ) : super(context, attrs, defStyleAttr) {}
 
-    override fun onSizeChanged(w: Int, h: Int, oldw: Int, oldh: Int) {
-        super.onSizeChanged(w, h, oldw, oldh)
-        updateBannerOrWallpaper()
+  override fun onSizeChanged(w: Int, h: Int, oldw: Int, oldh: Int) {
+    super.onSizeChanged(w, h, oldw, oldh)
+    updateBannerOrWallpaper()
+  }
+
+  private fun updateBannerOrWallpaper() {
+    val showBanner = Random.nextFloat() < bannerProbability
+    val randomBannerImage = Random.nextInt(1, 99)
+    val bannerImage = "banner_$randomBannerImage"
+    val resId = resources.getIdentifier(bannerImage, "drawable", context.packageName)
+    if (showBanner && resId != 0) {
+      val drawable = resources.getDrawable(resId, context.theme)
+      setImageDrawable(drawable)
+    } else {
+      updateWallpaper()
     }
+  }
 
-    private fun updateBannerOrWallpaper() {
-        val showBanner = Random.nextFloat() < bannerProbability
-        val randomBannerImage = Random.nextInt(1, 99) 
-        val bannerImage = "banner_$randomBannerImage"
-        val resId = resources.getIdentifier(bannerImage, "drawable", context.packageName)
-        if (showBanner && resId != 0) {
-            val drawable = resources.getDrawable(resId, context.theme)
-            setImageDrawable(drawable)
-        } else {
-            updateWallpaper()
-        }
-    }
-
-    override protected fun setWallpaperPreview() {
-    }
+  override protected fun setWallpaperPreview() {}
 }
