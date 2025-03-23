@@ -18,7 +18,7 @@ package com.android.settings.utils;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.provider.Settings;
-import android.util.Log;
+
 import androidx.appcompat.app.AlertDialog;
 
 import com.android.settings.R;
@@ -29,11 +29,11 @@ public class SystemRestartUtils {
 
     public static void showSystemUIRestartDialog(Context context) {
         new AlertDialog.Builder(context)
-            .setTitle(com.android.internal.R.string.systemui_restart_title)
-            .setMessage(com.android.internal.R.string.systemui_restart_message)
-            .setPositiveButton(R.string.ok, (dialog, which) -> restartSystemUI(context))
-            .setNegativeButton(R.string.cancel, null)
-            .show();
+                .setTitle(com.android.internal.R.string.systemui_restart_title)
+                .setMessage(com.android.internal.R.string.systemui_restart_message)
+                .setPositiveButton(R.string.ok, (dialog, which) -> restartSystemUI(context))
+                .setNegativeButton(R.string.cancel, null)
+                .show();
     }
 
     public static void restartSystemUI(Context context) {
@@ -42,7 +42,7 @@ public class SystemRestartUtils {
         int newValue = (currentValue == 0) ? 1 : 0;
         Settings.System.putInt(resolver, "system_ui_restart", newValue);
     }
-    
+
     public static void reloadSystemUI(Context context) {
         ContentResolver resolver = context.getContentResolver();
         int currentValue = Settings.System.getInt(resolver, "system_ui_reload", 0);
@@ -50,4 +50,3 @@ public class SystemRestartUtils {
         Settings.System.putInt(resolver, "system_ui_reload", newValue);
     }
 }
-

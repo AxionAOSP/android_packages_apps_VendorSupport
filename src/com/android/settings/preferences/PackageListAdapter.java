@@ -50,25 +50,27 @@ public class PackageListAdapter extends BaseAdapter implements Runnable {
     private Set<String> mExcludedPackages = new HashSet<>();
 
     // Packages which don't have launcher icons, but which we want to show nevertheless
-    private static final String[] PACKAGE_WHITELIST = new String[] {
-        "android",                          /* system server */
-        "com.android.systemui",             /* system UI */
-        "com.android.providers.downloads"   /* download provider */
-    };
+    private static final String[] PACKAGE_WHITELIST =
+            new String[] {
+                "android", /* system server */
+                "com.android.systemui", /* system UI */
+                "com.android.providers.downloads" /* download provider */
+            };
 
-    private final Handler mHandler = new Handler(Looper.getMainLooper()) {
-        @Override
-        public void handleMessage(Message msg) {
-            PackageItem item = (PackageItem) msg.obj;
-            int index = Collections.binarySearch(mInstalledPackages, item);
-            if (index < 0) {
-                mInstalledPackages.add(-index - 1, item);
-            } else {
-                mInstalledPackages.get(index).activityTitles.addAll(item.activityTitles);
-            }
-            notifyDataSetChanged();
-        }
-    };
+    private final Handler mHandler =
+            new Handler(Looper.getMainLooper()) {
+                @Override
+                public void handleMessage(Message msg) {
+                    PackageItem item = (PackageItem) msg.obj;
+                    int index = Collections.binarySearch(mInstalledPackages, item);
+                    if (index < 0) {
+                        mInstalledPackages.add(-index - 1, item);
+                    } else {
+                        mInstalledPackages.get(index).activityTitles.addAll(item.activityTitles);
+                    }
+                    notifyDataSetChanged();
+                }
+            };
 
     public static class PackageItem implements Comparable<PackageItem> {
         public final String packageName;
@@ -169,8 +171,9 @@ public class PackageListAdapter extends BaseAdapter implements Runnable {
                 continue;
             }
 
-            final PackageItem item = new PackageItem(appInfo.packageName,
-                    appInfo.loadLabel(mPm), appInfo.loadIcon(mPm));
+            final PackageItem item =
+                    new PackageItem(
+                            appInfo.packageName, appInfo.loadLabel(mPm), appInfo.loadIcon(mPm));
             item.activityTitles.add(info.loadLabel(mPm));
             mHandler.obtainMessage(0, item).sendToTarget();
         }
@@ -181,8 +184,9 @@ public class PackageListAdapter extends BaseAdapter implements Runnable {
             }
             try {
                 ApplicationInfo appInfo = mPm.getApplicationInfo(packageName, 0);
-                final PackageItem item = new PackageItem(appInfo.packageName,
-                        appInfo.loadLabel(mPm), appInfo.loadIcon(mPm));
+                final PackageItem item =
+                        new PackageItem(
+                                appInfo.packageName, appInfo.loadLabel(mPm), appInfo.loadIcon(mPm));
                 mHandler.obtainMessage(0, item).sendToTarget();
             } catch (PackageManager.NameNotFoundException ignored) {
                 // package not present, so nothing to add -> ignore it

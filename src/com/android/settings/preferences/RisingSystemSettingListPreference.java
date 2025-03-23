@@ -16,15 +16,9 @@
 package com.android.settings.preferences;
 
 import android.content.Context;
-import androidx.preference.ListPreference;
-import androidx.preference.PreferenceDataStore;
-import android.text.TextUtils;
 import android.util.AttributeSet;
-import android.provider.Settings;
 
 import com.android.settings.utils.AdaptivePreferenceUtils;
-
-import lineageos.providers.LineageSettings;
 
 import lineageos.preference.LineageSystemSettingListPreference;
 

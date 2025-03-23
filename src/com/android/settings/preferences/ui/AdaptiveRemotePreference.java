@@ -16,12 +16,7 @@
 package com.android.settings.preferences.ui;
 
 import android.content.Context;
-import android.content.res.TypedArray;
-import androidx.preference.Preference;
 import android.util.AttributeSet;
-import com.android.settings.R;
-
-import com.android.settings.network.SubscriptionUtil;
 
 import com.android.settings.utils.AdaptivePreferenceUtils;
 
@@ -37,4 +32,3 @@ public class AdaptiveRemotePreference extends RemotePreference {
         }
     }
 }
-

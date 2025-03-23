@@ -16,15 +16,13 @@
 package com.android.settings.preferences;
 
 import android.content.Context;
-import androidx.preference.ListPreference;
-import androidx.preference.PreferenceDataStore;
 import android.text.TextUtils;
 import android.util.AttributeSet;
-import android.provider.Settings;
+
+import androidx.preference.ListPreference;
+import androidx.preference.PreferenceDataStore;
 
 import com.android.settings.utils.AdaptivePreferenceUtils;
-
-import lineageos.providers.LineageSettings;
 
 public class SecureSettingListPreference extends ListPreference {
 
@@ -49,9 +47,10 @@ public class SecureSettingListPreference extends ListPreference {
 
     private void init(Context context, AttributeSet attrs) {
         isLineageSettings = AdaptivePreferenceUtils.isLineageSettings(context, attrs);
-        dataStore = isLineageSettings 
-            ? new LineageSecureSettingsStore(context.getContentResolver())
-            : new SecureSettingsStore(context.getContentResolver());
+        dataStore =
+                isLineageSettings
+                        ? new LineageSecureSettingsStore(context.getContentResolver())
+                        : new SecureSettingsStore(context.getContentResolver());
         setPreferenceDataStore(dataStore);
         int layoutRes = AdaptivePreferenceUtils.getLayoutResourceId(context, attrs);
         if (layoutRes != -1) {
@@ -81,7 +80,7 @@ public class SecureSettingListPreference extends ListPreference {
     protected void onSetInitialValue(boolean restoreValue, Object defaultValue) {
         // This is what default ListPreference implementation is doing without respecting
         // real default value:
-        //setValue(restoreValue ? getPersistedString(mValue) : (String) defaultValue);
+        // setValue(restoreValue ? getPersistedString(mValue) : (String) defaultValue);
         // Instead, we better do
         setValue(restoreValue ? getPersistedString((String) defaultValue) : (String) defaultValue);
     }

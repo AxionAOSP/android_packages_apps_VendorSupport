@@ -20,11 +20,10 @@ import android.content.Context;
 import android.os.SystemProperties;
 import android.util.AttributeSet;
 
+import com.android.settings.utils.AdaptivePreferenceUtils;
 import com.android.settingslib.development.SystemPropPoker;
 
 import lineageos.preference.SelfRemovingSwitchPreference;
-
-import com.android.settings.utils.AdaptivePreferenceUtils;
 
 public class SystemPropertySwitchPreference extends SelfRemovingSwitchPreference {
 

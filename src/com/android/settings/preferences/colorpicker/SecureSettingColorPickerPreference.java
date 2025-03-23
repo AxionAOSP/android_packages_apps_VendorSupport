@@ -16,9 +16,7 @@
 package com.android.settings.preferences.colorpicker;
 
 import android.content.Context;
-import android.text.TextUtils;
 import android.util.AttributeSet;
-import android.provider.Settings;
 
 import com.android.settings.preferences.SecureSettingsStore;
 

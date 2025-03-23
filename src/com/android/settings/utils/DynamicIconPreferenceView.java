@@ -16,22 +16,23 @@
 package com.android.settings.utils;
 
 import android.content.Context;
+import android.content.res.ColorStateList;
 import android.content.res.Resources;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.provider.Settings;
-import androidx.core.content.ContextCompat;
-import androidx.preference.internal.PreferenceImageView;
 import android.util.AttributeSet;
 import android.view.ViewGroup;
 import android.widget.ImageView;
-import android.content.res.ColorStateList;
+
+import androidx.core.content.ContextCompat;
+import androidx.preference.internal.PreferenceImageView;
+
+import com.android.settings.R;
 
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
-
-import com.android.settings.R;
 
 public class DynamicIconPreferenceView extends PreferenceImageView {
 
@@ -39,8 +40,8 @@ public class DynamicIconPreferenceView extends PreferenceImageView {
     private int maxHeight = dpToPx(getContext(), 52);
 
     private String[] colorMap = {
-            "#007aff", "#2fb151", "#fb7c47",
-            "#fa7d4d", "#fbb404", "#e13e39"
+        "#007aff", "#2fb151", "#fb7c47",
+        "#fa7d4d", "#fbb404", "#e13e39"
     };
 
     private Map<String, StyleAttributes> styleMap;
@@ -61,22 +62,57 @@ public class DynamicIconPreferenceView extends PreferenceImageView {
     private void initializeStyleMap(Context context) {
         styleMap = new HashMap<>();
         Resources resources = context.getResources();
-        
-        styleMap.put("0", new StyleAttributes(dpToPx(context, 6), 
-                dpToPx(context, 40), dpToPx(context, 40), null, R.color.top_level_preference_text_color_primary,
-                null, ImageView.ScaleType.CENTER_INSIDE));
-        styleMap.put("1", new StyleAttributes(resources.getDimensionPixelSize(R.dimen.top_level_icon_padding),
-                dpToPx(context, 48), dpToPx(context, 48),
-                R.drawable.custom_surface_color, R.color.top_level_preference_icon_tint, null, null));
-        styleMap.put("2", new StyleAttributes(resources.getDimensionPixelSize(R.dimen.top_level_icon_padding),
-                dpToPx(context, 48), dpToPx(context, 48),
-                R.drawable.custom_surface_color_rounded, R.color.top_level_preference_icon_tint, null, null));
-        styleMap.put("3", new StyleAttributes(resources.getDimensionPixelSize(R.dimen.top_level_icon_padding),
-                dpToPx(context, 48), dpToPx(context, 48),
-                R.drawable.custom_surface_color_oos, R.color.top_level_preference_text_color_primary, null, null));
-        styleMap.put("4", new StyleAttributes(resources.getDimensionPixelSize(R.dimen.top_level_icon_padding),
-                dpToPx(context, 48), dpToPx(context, 48),
-                R.drawable.custom_surface_color_rounded, Color.WHITE, getRandomColor(), null));
+
+        styleMap.put(
+                "0",
+                new StyleAttributes(
+                        dpToPx(context, 6),
+                        dpToPx(context, 40),
+                        dpToPx(context, 40),
+                        null,
+                        R.color.top_level_preference_text_color_primary,
+                        null,
+                        ImageView.ScaleType.CENTER_INSIDE));
+        styleMap.put(
+                "1",
+                new StyleAttributes(
+                        resources.getDimensionPixelSize(R.dimen.top_level_icon_padding),
+                        dpToPx(context, 48),
+                        dpToPx(context, 48),
+                        R.drawable.custom_surface_color,
+                        R.color.top_level_preference_icon_tint,
+                        null,
+                        null));
+        styleMap.put(
+                "2",
+                new StyleAttributes(
+                        resources.getDimensionPixelSize(R.dimen.top_level_icon_padding),
+                        dpToPx(context, 48),
+                        dpToPx(context, 48),
+                        R.drawable.custom_surface_color_rounded,
+                        R.color.top_level_preference_icon_tint,
+                        null,
+                        null));
+        styleMap.put(
+                "3",
+                new StyleAttributes(
+                        resources.getDimensionPixelSize(R.dimen.top_level_icon_padding),
+                        dpToPx(context, 48),
+                        dpToPx(context, 48),
+                        R.drawable.custom_surface_color_oos,
+                        R.color.top_level_preference_text_color_primary,
+                        null,
+                        null));
+        styleMap.put(
+                "4",
+                new StyleAttributes(
+                        resources.getDimensionPixelSize(R.dimen.top_level_icon_padding),
+                        dpToPx(context, 48),
+                        dpToPx(context, 48),
+                        R.drawable.custom_surface_color_rounded,
+                        Color.WHITE,
+                        getRandomColor(),
+                        null));
     }
 
     @Override
@@ -95,7 +131,10 @@ public class DynamicIconPreferenceView extends PreferenceImageView {
 
     private int getSettingsIconStyle() {
         return Settings.System.getIntForUser(
-            getContext().getContentResolver(), "settings_icon_style", 0, android.os.UserHandle.USER_CURRENT);
+                getContext().getContentResolver(),
+                "settings_icon_style",
+                0,
+                android.os.UserHandle.USER_CURRENT);
     }
 
     private void applyStyle(StyleAttributes attributes) {
@@ -104,7 +143,7 @@ public class DynamicIconPreferenceView extends PreferenceImageView {
         layoutParams.width = attributes.width;
         layoutParams.height = attributes.height;
         setLayoutParams(layoutParams);
-        
+
         if (attributes.background != null) {
             Drawable background = ContextCompat.getDrawable(getContext(), attributes.background);
             setBackground(background);
@@ -143,7 +182,14 @@ public class DynamicIconPreferenceView extends PreferenceImageView {
         final Object bgTint;
         final ImageView.ScaleType scaleType;
 
-        StyleAttributes(int padding, int width, int height, Integer background, Object tint, Object bgTint, ImageView.ScaleType scaleType) {
+        StyleAttributes(
+                int padding,
+                int width,
+                int height,
+                Integer background,
+                Object tint,
+                Object bgTint,
+                ImageView.ScaleType scaleType) {
             this.padding = padding;
             this.width = width;
             this.height = height;

@@ -42,7 +42,8 @@ public class ColoredPreferenceImageView extends PreferenceImageView {
         this(context, attrs, defStyleAttr, 0);
     }
 
-    public ColoredPreferenceImageView(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
+    public ColoredPreferenceImageView(
+            Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
         super(context, attrs, defStyleAttr, defStyleRes);
         setRandomBgTint();
     }

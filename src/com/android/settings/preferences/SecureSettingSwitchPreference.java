@@ -16,14 +16,13 @@
 package com.android.settings.preferences;
 
 import android.content.Context;
-import android.provider.Settings;
 import android.os.UserHandle;
+import android.provider.Settings;
 import android.util.AttributeSet;
-
-import lineageos.preference.SelfRemovingSwitchPreference;
 
 import com.android.settings.utils.AdaptivePreferenceUtils;
 
+import lineageos.preference.SelfRemovingSwitchPreference;
 import lineageos.providers.LineageSettings;
 
 public class SecureSettingSwitchPreference extends SelfRemovingSwitchPreference {
@@ -44,7 +43,7 @@ public class SecureSettingSwitchPreference extends SelfRemovingSwitchPreference 
         super(context);
         init(context, null);
     }
-    
+
     private void init(Context context, AttributeSet attrs) {
         isLineageSettings = AdaptivePreferenceUtils.isLineageSettings(context, attrs);
         int layoutRes = AdaptivePreferenceUtils.getLayoutResourceId(context, attrs);
@@ -55,9 +54,10 @@ public class SecureSettingSwitchPreference extends SelfRemovingSwitchPreference 
 
     @Override
     protected boolean isPersisted() {
-        return isLineageSettings 
-            ? LineageSettings.Secure.getString(getContext().getContentResolver(), getKey()) != null 
-            : Settings.Secure.getString(getContext().getContentResolver(), getKey()) != null;
+        return isLineageSettings
+                ? LineageSettings.Secure.getString(getContext().getContentResolver(), getKey())
+                        != null
+                : Settings.Secure.getString(getContext().getContentResolver(), getKey()) != null;
     }
 
     @Override
@@ -65,18 +65,24 @@ public class SecureSettingSwitchPreference extends SelfRemovingSwitchPreference 
         if (isLineageSettings) {
             LineageSettings.Secure.putInt(getContext().getContentResolver(), key, value ? 1 : 0);
         } else {
-            Settings.Secure.putIntForUser(getContext().getContentResolver(), key, value ? 1 : 0, UserHandle.USER_CURRENT);
+            Settings.Secure.putIntForUser(
+                    getContext().getContentResolver(), key, value ? 1 : 0, UserHandle.USER_CURRENT);
         }
     }
 
     @Override
     protected boolean getBoolean(String key, boolean defaultValue) {
         if (isLineageSettings) {
-            return LineageSettings.Secure.getInt(getContext().getContentResolver(),
-                    key, defaultValue ? 1 : 0) != 0;
+            return LineageSettings.Secure.getInt(
+                            getContext().getContentResolver(), key, defaultValue ? 1 : 0)
+                    != 0;
         } else {
-            return Settings.Secure.getIntForUser(getContext().getContentResolver(),
-                    key, defaultValue ? 1 : 0, UserHandle.USER_CURRENT) != 0;
+            return Settings.Secure.getIntForUser(
+                            getContext().getContentResolver(),
+                            key,
+                            defaultValue ? 1 : 0,
+                            UserHandle.USER_CURRENT)
+                    != 0;
         }
     }
 }

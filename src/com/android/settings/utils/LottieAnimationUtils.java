@@ -20,12 +20,13 @@ import android.graphics.ColorFilter;
 import android.graphics.PorterDuff;
 import android.graphics.PorterDuffColorFilter;
 
+import com.android.settings.R;
+
 import com.airbnb.lottie.LottieAnimationView;
 import com.airbnb.lottie.LottieProperty;
 import com.airbnb.lottie.model.KeyPath;
 import com.airbnb.lottie.value.LottieFrameInfo;
 import com.airbnb.lottie.value.SimpleLottieValueCallback;
-import com.android.settings.R;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -40,22 +41,22 @@ public abstract class LottieAnimationUtils {
         colors.put("wave path 2 opacity0.5", color);
     }
 
-    public static void applyAnimationColor(Context context, LottieAnimationView lottieAnimationView) {
+    public static void applyAnimationColor(
+            Context context, LottieAnimationView lottieAnimationView) {
         if (context == null) return;
         for (Map.Entry<String, Integer> entry : colors.entrySet()) {
             String keyPath = entry.getKey();
             final int color = context.getColor(entry.getValue());
             if (lottieAnimationView != null) {
                 lottieAnimationView.addValueCallback(
-                    new KeyPath("**", keyPath, "**"),
-                    LottieProperty.COLOR_FILTER,
-                    new SimpleLottieValueCallback<ColorFilter>() {
-                        @Override
-                        public ColorFilter getValue(LottieFrameInfo<ColorFilter> frameInfo) {
-                            return new PorterDuffColorFilter(color, PorterDuff.Mode.SRC_ATOP);
-                        }
-                    }
-                );
+                        new KeyPath("**", keyPath, "**"),
+                        LottieProperty.COLOR_FILTER,
+                        new SimpleLottieValueCallback<ColorFilter>() {
+                            @Override
+                            public ColorFilter getValue(LottieFrameInfo<ColorFilter> frameInfo) {
+                                return new PorterDuffColorFilter(color, PorterDuff.Mode.SRC_ATOP);
+                            }
+                        });
             }
         }
     }

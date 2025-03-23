@@ -18,11 +18,10 @@ package com.android.settings.preferences;
 import android.content.Context;
 import android.util.AttributeSet;
 
-import com.android.settings.utils.AdaptivePreferenceUtils;
-
 public class LineageSystemSettingSeekBarPreference extends CustomSeekBarPreference {
 
-    public LineageSystemSettingSeekBarPreference(Context context, AttributeSet attrs, int defStyle) {
+    public LineageSystemSettingSeekBarPreference(
+            Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
         setPreferenceDataStore(new LineageSystemSettingsStore(context.getContentResolver()));
     }

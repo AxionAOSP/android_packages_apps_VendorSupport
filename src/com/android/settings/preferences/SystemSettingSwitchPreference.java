@@ -16,14 +16,13 @@
 package com.android.settings.preferences;
 
 import android.content.Context;
-import android.provider.Settings;
 import android.os.UserHandle;
+import android.provider.Settings;
 import android.util.AttributeSet;
-
-import lineageos.preference.SelfRemovingSwitchPreference;
 
 import com.android.settings.utils.AdaptivePreferenceUtils;
 
+import lineageos.preference.SelfRemovingSwitchPreference;
 import lineageos.providers.LineageSettings;
 
 public class SystemSettingSwitchPreference extends SelfRemovingSwitchPreference {
@@ -55,9 +54,10 @@ public class SystemSettingSwitchPreference extends SelfRemovingSwitchPreference 
 
     @Override
     protected boolean isPersisted() {
-        return isLineageSettings 
-            ? LineageSettings.System.getString(getContext().getContentResolver(), getKey()) != null 
-            : Settings.System.getString(getContext().getContentResolver(), getKey()) != null;
+        return isLineageSettings
+                ? LineageSettings.System.getString(getContext().getContentResolver(), getKey())
+                        != null
+                : Settings.System.getString(getContext().getContentResolver(), getKey()) != null;
     }
 
     @Override
@@ -65,18 +65,24 @@ public class SystemSettingSwitchPreference extends SelfRemovingSwitchPreference 
         if (isLineageSettings) {
             LineageSettings.System.putInt(getContext().getContentResolver(), key, value ? 1 : 0);
         } else {
-            Settings.System.putIntForUser(getContext().getContentResolver(), key, value ? 1 : 0, UserHandle.USER_CURRENT);
+            Settings.System.putIntForUser(
+                    getContext().getContentResolver(), key, value ? 1 : 0, UserHandle.USER_CURRENT);
         }
     }
 
     @Override
     protected boolean getBoolean(String key, boolean defaultValue) {
         if (isLineageSettings) {
-            return LineageSettings.System.getInt(getContext().getContentResolver(),
-                    key, defaultValue ? 1 : 0) != 0;
+            return LineageSettings.System.getInt(
+                            getContext().getContentResolver(), key, defaultValue ? 1 : 0)
+                    != 0;
         } else {
-            return Settings.System.getIntForUser(getContext().getContentResolver(),
-                    key, defaultValue ? 1 : 0, UserHandle.USER_CURRENT) != 0;
+            return Settings.System.getIntForUser(
+                            getContext().getContentResolver(),
+                            key,
+                            defaultValue ? 1 : 0,
+                            UserHandle.USER_CURRENT)
+                    != 0;
         }
     }
 }

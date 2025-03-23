@@ -16,8 +16,8 @@
 package com.android.settings.preferences;
 
 import android.content.ContentResolver;
-import android.preference.PreferenceDataStore;
 import android.os.UserHandle;
+import android.preference.PreferenceDataStore;
 import android.provider.Settings;
 
 public class SecureSettingsStore extends androidx.preference.PreferenceDataStore
@@ -30,19 +30,24 @@ public class SecureSettingsStore extends androidx.preference.PreferenceDataStore
     }
 
     public boolean getBoolean(String key, boolean defValue) {
-        return Settings.Secure.getIntForUser(mContentResolver, key, defValue ? 1 : 0, UserHandle.USER_CURRENT) != 0;
+        return Settings.Secure.getIntForUser(
+                        mContentResolver, key, defValue ? 1 : 0, UserHandle.USER_CURRENT)
+                != 0;
     }
 
     public float getFloat(String key, float defValue) {
-        return Settings.Secure.getFloatForUser(mContentResolver, key, defValue, UserHandle.USER_CURRENT);
+        return Settings.Secure.getFloatForUser(
+                mContentResolver, key, defValue, UserHandle.USER_CURRENT);
     }
 
     public int getInt(String key, int defValue) {
-        return Settings.Secure.getIntForUser(mContentResolver, key, defValue, UserHandle.USER_CURRENT);
+        return Settings.Secure.getIntForUser(
+                mContentResolver, key, defValue, UserHandle.USER_CURRENT);
     }
 
     public long getLong(String key, long defValue) {
-        return Settings.Secure.getLongForUser(mContentResolver, key, defValue, UserHandle.USER_CURRENT);
+        return Settings.Secure.getLongForUser(
+                mContentResolver, key, defValue, UserHandle.USER_CURRENT);
     }
 
     public String getString(String key, String defValue) {

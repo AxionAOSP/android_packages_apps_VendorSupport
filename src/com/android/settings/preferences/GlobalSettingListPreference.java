@@ -16,10 +16,10 @@
 package com.android.settings.preferences;
 
 import android.content.Context;
-import androidx.preference.ListPreference;
 import android.text.TextUtils;
 import android.util.AttributeSet;
-import android.provider.Settings;
+
+import androidx.preference.ListPreference;
 
 public class GlobalSettingListPreference extends ListPreference {
 
@@ -62,7 +62,7 @@ public class GlobalSettingListPreference extends ListPreference {
     protected void onSetInitialValue(boolean restoreValue, Object defaultValue) {
         // This is what default ListPreference implementation is doing without respecting
         // real default value:
-        //setValue(restoreValue ? getPersistedString(mValue) : (String) defaultValue);
+        // setValue(restoreValue ? getPersistedString(mValue) : (String) defaultValue);
         // Instead, we better do
         setValue(restoreValue ? getPersistedString((String) defaultValue) : (String) defaultValue);
     }

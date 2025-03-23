@@ -19,46 +19,38 @@
 
 package com.android.settings.preferences.colorpicker;
 
-import android.app.AlertDialog;
 import android.content.Context;
-import android.content.DialogInterface;
-import android.content.DialogInterface.OnClickListener;
-import android.content.res.Configuration;
 import android.content.res.TypedArray;
-import android.graphics.Bitmap;
-import android.graphics.Bitmap.Config;
 import android.graphics.Color;
 import android.graphics.drawable.ShapeDrawable;
 import android.graphics.drawable.shapes.OvalShape;
 import android.os.Bundle;
 import android.os.Parcel;
 import android.os.Parcelable;
-import androidx.preference.Preference;
-import androidx.preference.PreferenceViewHolder;
 import android.util.AttributeSet;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup.LayoutParams;
-import android.widget.Button;
-import android.widget.GridLayout;
-import android.view.WindowManager;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 
-import com.android.settings.R;
+import androidx.preference.Preference;
+import androidx.preference.PreferenceViewHolder;
 
+import com.android.settings.R;
 import com.android.settings.utils.AdaptivePreferenceUtils;
 
 /**
  * A preference type that allows a user to choose a time
+ *
  * @author Sergey Margaritov
  */
-public class ColorPickerPreference extends Preference implements
-        ColorPickerDialog.OnColorChangedListener {
+public class ColorPickerPreference extends Preference
+        implements ColorPickerDialog.OnColorChangedListener {
 
     private static final String ANDROIDNS = "http://schemas.android.com/apk/res/android";
-    private static final String SETTINGS_NS = "http://schemas.android.com/apk/res/com.android.settings";
+    private static final String SETTINGS_NS =
+            "http://schemas.android.com/apk/res/com.android.settings";
 
     PreferenceViewHolder mView;
     LinearLayout mWidgetFrameView;
@@ -87,8 +79,8 @@ public class ColorPickerPreference extends Preference implements
         this(context, null);
     }
 
-    public ColorPickerPreference(Context context, AttributeSet attrs, int defStyleAttr,
-            int defStyleRes) {
+    public ColorPickerPreference(
+            Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
         super(context, attrs, defStyleAttr, defStyleRes);
         int layoutRes = AdaptivePreferenceUtils.getLayoutResourceId(context, attrs);
         if (layoutRes != -1) {
@@ -105,9 +97,11 @@ public class ColorPickerPreference extends Preference implements
 
     @Override
     protected void onSetInitialValue(boolean restorePersistedValue, Object defaultValue) {
-        // when using PreferenceDataStore, restorePersistedValue is always true (see Preference class for reference)
-        // so we load the persistent value with getPersistedInt if available in the data store, 
-        // and use defaultValue as fallback (onGetDefaultValue has been already called and it loaded the android:defaultValue attr from our xml).
+        // when using PreferenceDataStore, restorePersistedValue is always true (see Preference
+        // class for reference)
+        // so we load the persistent value with getPersistedInt if available in the data store,
+        // and use defaultValue as fallback (onGetDefaultValue has been already called and it loaded
+        // the android:defaultValue attr from our xml).
         if (defaultValue == null) {
             // if we forgot to add android:defaultValue, default to black color
             defaultValue = Color.BLACK;
@@ -137,14 +131,14 @@ public class ColorPickerPreference extends Preference implements
         view.setDividerAllowedAbove(mDividerAbove);
         view.setDividerAllowedBelow(mDividerBelow);
 
-        view.itemView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                showDialog(null);
-            }
-        });
-        mWidgetFrameView = ((LinearLayout) view
-                .findViewById(android.R.id.widget_frame));
+        view.itemView.setOnClickListener(
+                new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        showDialog(null);
+                    }
+                });
+        mWidgetFrameView = ((LinearLayout) view.findViewById(android.R.id.widget_frame));
         mWidgetFrameView.setOrientation(LinearLayout.HORIZONTAL);
         mWidgetFrameView.setVisibility(View.VISIBLE);
         mWidgetFrameView.setMinimumWidth(0);
@@ -152,21 +146,19 @@ public class ColorPickerPreference extends Preference implements
                 mWidgetFrameView.getPaddingLeft(),
                 mWidgetFrameView.getPaddingTop(),
                 (int) (mDensity * 8),
-                mWidgetFrameView.getPaddingBottom()
-                );
+                mWidgetFrameView.getPaddingBottom());
         setDefaultButton();
         setPreviewColor();
     }
 
     /**
-     * Restore a default value, not necessarily a color
-     * For example: Set default value to -1 to remove a color filter
+     * Restore a default value, not necessarily a color For example: Set default value to -1 to
+     * remove a color filter
      *
      * @author Randall Rushing aka Bigrushdog
      */
     private void setDefaultButton() {
-        if (!mShowReset || mView == null || mWidgetFrameView == null)
-            return;
+        if (!mShowReset || mView == null || mWidgetFrameView == null) return;
 
         // remove already created default button
         int count = mWidgetFrameView.getChildCount();
@@ -187,23 +179,23 @@ public class ColorPickerPreference extends Preference implements
         mWidgetFrameView.addView(defView);
         defView.setImageDrawable(getContext().getDrawable(R.drawable.ic_settings_backup_restore));
         defView.setTag("default");
-        defView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                onColorChanged(mDefaultValue);
-            }
-        });
+        defView.setOnClickListener(
+                new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        onColorChanged(mDefaultValue);
+                    }
+                });
         // sorcery for a linear layout ugh
         View spacer = new View(getContext());
         spacer.setTag("spacer");
-        spacer.setLayoutParams(new LinearLayout.LayoutParams((int) (mDensity * 16),
-                LayoutParams.MATCH_PARENT));
+        spacer.setLayoutParams(
+                new LinearLayout.LayoutParams((int) (mDensity * 16), LayoutParams.MATCH_PARENT));
         mWidgetFrameView.addView(spacer);
     }
 
     private void setPreviewColor() {
-        if (!mShowPreview || mView == null || mWidgetFrameView == null)
-            return;
+        if (!mShowPreview || mView == null || mWidgetFrameView == null) return;
 
         // remove already create preview image
         int count = mWidgetFrameView.getChildCount();
@@ -216,9 +208,12 @@ public class ColorPickerPreference extends Preference implements
         if (!isEnabled()) return;
         ImageView iView = new ImageView(getContext());
         mWidgetFrameView.addView(iView);
-        final int size = (int) getContext().getResources().getDimension(R.dimen.oval_notification_size);
-        final int imageColor = ((mCurrentValue & 0xF0F0F0) == 0xF0F0F0) ?
-                (mCurrentValue - 0x101010) : mCurrentValue;
+        final int size =
+                (int) getContext().getResources().getDimension(R.dimen.oval_notification_size);
+        final int imageColor =
+                ((mCurrentValue & 0xF0F0F0) == 0xF0F0F0)
+                        ? (mCurrentValue - 0x101010)
+                        : mCurrentValue;
         iView.setImageDrawable(createOvalShape(size, 0xFF000000 + imageColor));
         iView.setTag("preview");
     }
@@ -241,8 +236,7 @@ public class ColorPickerPreference extends Preference implements
     }
 
     protected void showDialog(Bundle state) {
-        if (!isEnabled())
-            return;
+        if (!isEnabled()) return;
 
         mDialog = new ColorPickerDialog(getContext(), mCurrentValue);
         mDialog.setOnColorChangedListener(this);
@@ -253,10 +247,9 @@ public class ColorPickerPreference extends Preference implements
             mDialog.onRestoreInstanceState(state);
         }
         mDialog.show();
-        mDialog.getWindow().setSoftInputMode(
-                android.view.WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
+        mDialog.getWindow()
+                .setSoftInputMode(android.view.WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
     }
-
 
     /**
      * Toggle Alpha Slider visibility (by default it's disabled)
@@ -270,7 +263,8 @@ public class ColorPickerPreference extends Preference implements
     /**
      * For custom purposes. Not used by ColorPickerPreferrence
      *
-     * set color preview value from outside
+     * <p>set color preview value from outside
+     *
      * @author kufikugel
      */
     public void setNewPreviewColor(int color) {
@@ -332,8 +326,7 @@ public class ColorPickerPreference extends Preference implements
             red = Integer.parseInt(argb.substring(2, 4), 16);
             green = Integer.parseInt(argb.substring(4, 6), 16);
             blue = Integer.parseInt(argb.substring(6, 8), 16);
-        }
-        else if (argb.length() == 6) {
+        } else if (argb.length() == 6) {
             alpha = 255;
             red = Integer.parseInt(argb.substring(0, 2), 16);
             green = Integer.parseInt(argb.substring(2, 4), 16);
@@ -398,14 +391,14 @@ public class ColorPickerPreference extends Preference implements
         @SuppressWarnings("unused")
         public static final Parcelable.Creator<SavedState> CREATOR =
                 new Parcelable.Creator<SavedState>() {
-            public SavedState createFromParcel(Parcel in) {
-                return new SavedState(in);
-            }
+                    public SavedState createFromParcel(Parcel in) {
+                        return new SavedState(in);
+                    }
 
-            public SavedState[] newArray(int size) {
-                return new SavedState[size];
-            }
-        };
+                    public SavedState[] newArray(int size) {
+                        return new SavedState[size];
+                    }
+                };
     }
 
     private static ShapeDrawable createOvalShape(int size, int color) {

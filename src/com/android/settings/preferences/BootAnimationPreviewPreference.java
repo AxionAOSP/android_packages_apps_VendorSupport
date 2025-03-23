@@ -56,8 +56,12 @@ public class BootAnimationPreviewPreference extends Preference {
         int bootAnimStyle = BootAnimationUtils.getBootAnimStyle();
         if (bootAnimStyle == 2 || bootAnimStyle == 3) {
             if (mImageView != null) {
-                Drawable drawable = getContext().getDrawable(
-                        bootAnimStyle == 2 ? R.drawable.google_gemini : R.drawable.google_monet);
+                Drawable drawable =
+                        getContext()
+                                .getDrawable(
+                                        bootAnimStyle == 2
+                                                ? R.drawable.google_gemini
+                                                : R.drawable.google_monet);
                 mImageView.setImageDrawable(drawable);
             }
         } else {
@@ -70,7 +74,8 @@ public class BootAnimationPreviewPreference extends Preference {
         @Override
         protected AnimationDrawable doInBackground(Void... voids) {
             if (isCancelled()) return null;
-            AnimationDrawable originalDrawable = BootAnimationUtils.getBootAnimationFrames(getContext());
+            AnimationDrawable originalDrawable =
+                    BootAnimationUtils.getBootAnimationFrames(getContext());
             if (originalDrawable == null) {
                 return null;
             }

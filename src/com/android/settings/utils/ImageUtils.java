@@ -33,13 +33,16 @@ import java.util.Locale;
 
 public class ImageUtils {
 
-    public static String saveImageToInternalStorage(Context context, Uri imgUri, String featurePath, String filePrefix) {
+    public static String saveImageToInternalStorage(
+            Context context, Uri imgUri, String featurePath, String filePrefix) {
         try {
             InputStream inputStream;
-            if (imgUri.toString().startsWith("content://com.google.android.apps.photos.contentprovider")) {
+            if (imgUri.toString()
+                    .startsWith("content://com.google.android.apps.photos.contentprovider")) {
                 List<String> segments = imgUri.getPathSegments();
                 if (segments.size() > 2) {
-                    String mediaUriString = URLDecoder.decode(segments.get(2), StandardCharsets.UTF_8.name());
+                    String mediaUriString =
+                            URLDecoder.decode(segments.get(2), StandardCharsets.UTF_8.name());
                     Uri mediaUri = Uri.parse(mediaUriString);
                     inputStream = context.getContentResolver().openInputStream(mediaUri);
                 } else {
@@ -49,13 +52,16 @@ public class ImageUtils {
                 inputStream = context.getContentResolver().openInputStream(imgUri);
             }
             Bitmap bitmap = BitmapFactory.decodeStream(inputStream);
-            String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss", Locale.US).format(new Date());
+            String timeStamp =
+                    new SimpleDateFormat("yyyyMMdd_HHmmss", Locale.US).format(new Date());
             String imageFileName = filePrefix + "_" + timeStamp + ".png";
             File directory = new File("/sdcard/risingOS/" + featurePath);
             if (!directory.exists() && !directory.mkdirs()) {
                 return null;
             }
-            File[] files = directory.listFiles((dir, name) -> name.startsWith(filePrefix) && name.endsWith(".png"));
+            File[] files =
+                    directory.listFiles(
+                            (dir, name) -> name.startsWith(filePrefix) && name.endsWith(".png"));
             if (files != null) {
                 for (File file : files) {
                     file.delete();

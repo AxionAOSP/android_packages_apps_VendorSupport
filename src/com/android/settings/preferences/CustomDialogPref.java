@@ -23,8 +23,8 @@ public class CustomDialogPref<T extends DialogInterface> extends DialogPreferenc
 
     private CustomPreferenceDialogFragment mFragment;
 
-    public CustomDialogPref(Context context, AttributeSet attrs, int defStyleAttr,
-            int defStyleRes) {
+    public CustomDialogPref(
+            Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
         super(context, attrs, defStyleAttr, defStyleRes);
     }
 
@@ -41,38 +41,31 @@ public class CustomDialogPref<T extends DialogInterface> extends DialogPreferenc
     }
 
     public boolean isDialogOpen() {
-        return getDialog() != null && getDialog() instanceof Dialog &&
-                ((Dialog)getDialog()).isShowing();
+        return getDialog() != null
+                && getDialog() instanceof Dialog
+                && ((Dialog) getDialog()).isShowing();
     }
 
     public T getDialog() {
         return (T) (mFragment != null ? mFragment.getDialog() : null);
     }
 
-    protected void onPrepareDialogBuilder(AlertDialog.Builder builder,
-            DialogInterface.OnClickListener listener) {
-    }
+    protected void onPrepareDialogBuilder(
+            AlertDialog.Builder builder, DialogInterface.OnClickListener listener) {}
 
-    protected void onDialogClosed(boolean positiveResult) {
-    }
+    protected void onDialogClosed(boolean positiveResult) {}
 
-    protected void onClick(T dialog, int which) {
-    }
+    protected void onClick(T dialog, int which) {}
 
-    protected void onBindDialogView(View view) {
-    }
+    protected void onBindDialogView(View view) {}
 
-    protected void onStart() {
-    }
+    protected void onStart() {}
 
-    protected void onStop() {
-    }
+    protected void onStop() {}
 
-    protected void onPause() {
-    }
+    protected void onPause() {}
 
-    protected void onResume() {
-    }
+    protected void onResume() {}
 
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         return null;
@@ -126,18 +119,18 @@ public class CustomDialogPref<T extends DialogInterface> extends DialogPreferenc
         public void onStart() {
             super.onStart();
             if (getDialog() instanceof AlertDialog) {
-                AlertDialog a = (AlertDialog)getDialog();
+                AlertDialog a = (AlertDialog) getDialog();
                 if (a.getButton(Dialog.BUTTON_NEUTRAL) != null) {
-                    a.getButton(Dialog.BUTTON_NEUTRAL).setOnClickListener(
-                            new OnDismissListener(a, Dialog.BUTTON_NEUTRAL));
+                    a.getButton(Dialog.BUTTON_NEUTRAL)
+                            .setOnClickListener(new OnDismissListener(a, Dialog.BUTTON_NEUTRAL));
                 }
                 if (a.getButton(Dialog.BUTTON_POSITIVE) != null) {
-                    a.getButton(Dialog.BUTTON_POSITIVE).setOnClickListener(
-                            new OnDismissListener(a, Dialog.BUTTON_POSITIVE));
+                    a.getButton(Dialog.BUTTON_POSITIVE)
+                            .setOnClickListener(new OnDismissListener(a, Dialog.BUTTON_POSITIVE));
                 }
                 if (a.getButton(Dialog.BUTTON_NEGATIVE) != null) {
-                    a.getButton(Dialog.BUTTON_NEGATIVE).setOnClickListener(
-                            new OnDismissListener(a, Dialog.BUTTON_NEGATIVE));
+                    a.getButton(Dialog.BUTTON_NEGATIVE)
+                            .setOnClickListener(new OnDismissListener(a, Dialog.BUTTON_NEGATIVE));
                 }
             }
             getCustomizablePreference().onStart();

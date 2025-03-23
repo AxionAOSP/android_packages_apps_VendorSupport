@@ -16,12 +16,9 @@
 package com.android.settings.preferences.ui;
 
 import android.content.Context;
-import android.content.res.TypedArray;
-import androidx.preference.Preference;
-import androidx.preference.SwitchPreferenceCompat;
 import android.util.AttributeSet;
 
-import com.android.settings.R;
+import androidx.preference.SwitchPreferenceCompat;
 
 import com.android.settings.utils.AdaptivePreferenceUtils;
 
@@ -49,4 +46,3 @@ public class AdaptiveSwitchPreference extends SwitchPreferenceCompat {
         }
     }
 }
-

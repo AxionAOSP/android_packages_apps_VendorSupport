@@ -28,8 +28,8 @@ import com.android.internal.telephony.PhoneConstants;
 import com.android.internal.telephony.RILConstants;
 
 /**
- * Helper class which has the same logic as MobileNetworkSettings to display the same
- * network modes and strings as it does.
+ * Helper class which has the same logic as MobileNetworkSettings to display the same network modes
+ * and strings as it does.
  */
 public class TelephonyUtils {
 
@@ -45,9 +45,7 @@ public class TelephonyUtils {
             "network_mode_picker::chosen_value";
     public static final String EXTRA_SUBID = "network_mode_picker::sub_id";
 
-    /**
-     * Returns whether the device is voice-capable (meaning, it is also a phone).
-     */
+    /** Returns whether the device is voice-capable (meaning, it is also a phone). */
     public static boolean isVoiceCapable(Context context) {
         TelephonyManager telephony =
                 (TelephonyManager) context.getSystemService(Context.TELEPHONY_SERVICE);
@@ -55,17 +53,23 @@ public class TelephonyUtils {
     }
 
     public static String getNetworkModeString(Context context, int networkMode, int subId) {
-        return getNetworkModeString(context,
+        return getNetworkModeString(
+                context,
                 networkMode,
                 TelephonyManager.from(context).getCurrentPhoneType(subId) /* phone type */,
-                show4GForLTE(context)/* show 4G for lte */,
-                isSupportTdscdma(context, subId)/* supports TDS CDMA*/,
-                isGlobalCDMA(context, subId, isLteOnCdma(context, subId))/* is Global cdma */,
-                isWorldMode(context)/* is worldwide */);
+                show4GForLTE(context) /* show 4G for lte */,
+                isSupportTdscdma(context, subId) /* supports TDS CDMA*/,
+                isGlobalCDMA(context, subId, isLteOnCdma(context, subId)) /* is Global cdma */,
+                isWorldMode(context) /* is worldwide */);
     }
 
-    public static String getNetworkModeString(Context context, int networkMode,
-            int phoneType, boolean show4GForLTE, boolean isSupportTdsCdma, boolean isGlobalCdma,
+    public static String getNetworkModeString(
+            Context context,
+            int networkMode,
+            int phoneType,
+            boolean show4GForLTE,
+            boolean isSupportTdsCdma,
+            boolean isGlobalCdma,
             boolean isWorldMode) {
         String r = null;
         switch (networkMode) {
@@ -88,8 +92,7 @@ public class TelephonyUtils {
             case RILConstants.NETWORK_MODE_LTE_WCDMA:
             case RILConstants.NETWORK_MODE_LTE_ONLY:
             case RILConstants.NETWORK_MODE_LTE_CDMA_EVDO:
-                r = (show4GForLTE)
-                        ? "network_4G" : "network_lte";
+                r = (show4GForLTE) ? "network_4G" : "network_lte";
                 break;
             case RILConstants.NETWORK_MODE_CDMA_NO_EVDO:
                 r = "network_1x";
@@ -109,8 +112,7 @@ public class TelephonyUtils {
                     if (phoneType == RILConstants.CDMA_PHONE || isGlobalCdma || isWorldMode) {
                         r = "network_global";
                     } else {
-                        r = (show4GForLTE)
-                                ? "network_4G" : "network_lte";
+                        r = (show4GForLTE) ? "network_4G" : "network_lte";
                     }
                 }
                 break;
@@ -136,17 +138,21 @@ public class TelephonyUtils {
     private static boolean isSupportTdscdma(Context context, int subId) {
         final Resources phoneResources = getPhoneResources(context);
         if (phoneResources != null) {
-            int id = phoneResources.getIdentifier("config_support_tdscdma",
-                    "bool", "com.android.phone");
+            int id =
+                    phoneResources.getIdentifier(
+                            "config_support_tdscdma", "bool", "com.android.phone");
             if (phoneResources.getBoolean(id)) {
                 return true;
             }
 
-            final String operatorNumeric = TelephonyManager.from(context)
-                    .getSimOperatorNumeric(subId);
+            final String operatorNumeric =
+                    TelephonyManager.from(context).getSimOperatorNumeric(subId);
 
-            int tdcdmaArrId = phoneResources.getIdentifier("config_support_tdscdma_roaming_on_networks",
-                    "string-array", "com.android.phone");
+            int tdcdmaArrId =
+                    phoneResources.getIdentifier(
+                            "config_support_tdscdma_roaming_on_networks",
+                            "string-array",
+                            "com.android.phone");
 
             if (tdcdmaArrId > 0) {
                 String[] numericArray = phoneResources.getStringArray(tdcdmaArrId);
@@ -166,8 +172,9 @@ public class TelephonyUtils {
     private static boolean show4GForLTE(Context context) {
         try {
             Context con = context.createPackageContext("com.android.systemui", 0);
-            int id = con.getResources().getIdentifier("config_show4GForLTE",
-                    "bool", "com.android.systemui");
+            int id =
+                    con.getResources()
+                            .getIdentifier("config_show4GForLTE", "bool", "com.android.systemui");
             return con.getResources().getBoolean(id);
         } catch (PackageManager.NameNotFoundException e) {
             return false;
@@ -175,8 +182,8 @@ public class TelephonyUtils {
     }
 
     private static boolean isGlobalCDMA(Context context, int subId, boolean isLteOnCdma) {
-        final CarrierConfigManager carrierConfigMan = (CarrierConfigManager)
-                context.getSystemService(Context.CARRIER_CONFIG_SERVICE);
+        final CarrierConfigManager carrierConfigMan =
+                (CarrierConfigManager) context.getSystemService(Context.CARRIER_CONFIG_SERVICE);
         final PersistableBundle carrierConfig = carrierConfigMan.getConfigForSubId(subId);
         return isLteOnCdma
                 && carrierConfig.getBoolean(CarrierConfigManager.KEY_SHOW_CDMA_CHOICES_BOOL);
@@ -189,25 +196,30 @@ public class TelephonyUtils {
 
     private static boolean isWorldMode(Context context) {
         boolean worldModeOn = false;
-        final TelephonyManager tm = (TelephonyManager)
-                context.getSystemService(Context.TELEPHONY_SERVICE);
+        final TelephonyManager tm =
+                (TelephonyManager) context.getSystemService(Context.TELEPHONY_SERVICE);
 
         Resources phoneResources = getPhoneResources(context);
         if (phoneResources != null) {
-            int id = phoneResources.getIdentifier("config_world_mode",
-                    "string", "com.android.phone");
+            int id =
+                    phoneResources.getIdentifier(
+                            "config_world_mode", "string", "com.android.phone");
 
             if (id > 0) {
                 final String configString = phoneResources.getString(id);
 
                 if (!TextUtils.isEmpty(configString)) {
                     String[] configArray = configString.split(";");
-                    // Check if we have World mode configuration set to True only or config is set to True
+                    // Check if we have World mode configuration set to True only or config is set
+                    // to True
                     // and SIM GID value is also set and matches to the current SIM GID.
-                    if (configArray != null &&
-                            ((configArray.length == 1 && configArray[0].equalsIgnoreCase("true")) ||
-                                    (configArray.length == 2 && !TextUtils.isEmpty(configArray[1]) &&
-                                            tm != null && configArray[1].equalsIgnoreCase(tm.getGroupIdLevel1())))) {
+                    if (configArray != null
+                            && ((configArray.length == 1 && configArray[0].equalsIgnoreCase("true"))
+                                    || (configArray.length == 2
+                                            && !TextUtils.isEmpty(configArray[1])
+                                            && tm != null
+                                            && configArray[1].equalsIgnoreCase(
+                                                    tm.getGroupIdLevel1())))) {
                         worldModeOn = true;
                     }
                 }
