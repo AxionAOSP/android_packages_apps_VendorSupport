@@ -45,12 +45,16 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
         handler.postDelayed(this, 2000)
       }
     }
-
+    
   init {
     context.theme.obtainStyledAttributes(attrs, R.styleable.WallpaperView, 0, 0).use {
       isBlurred = it.getBoolean(R.styleable.WallpaperView_blurred, false)
       dimLevel = it.getInt(R.styleable.WallpaperView_dimLevel, 0).coerceIn(0, 100)
     }
+  }
+  
+  override fun onAttachedToWindow() {
+    super.onAttachedToWindow()
     setWallpaperPreview()
     handler.postDelayed(wallpaperChecker, 2000)
   }
