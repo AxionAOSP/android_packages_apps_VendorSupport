@@ -52,10 +52,6 @@ public class SystemSettingListPreference extends ListPreference {
                         ? new LineageSystemSettingsStore(context.getContentResolver())
                         : new SystemSettingsStore(context.getContentResolver());
         setPreferenceDataStore(dataStore);
-        int layoutRes = AdaptivePreferenceUtils.getLayoutResourceId(context, attrs);
-        if (layoutRes != -1) {
-            setLayoutResource(layoutRes);
-        }
     }
 
     @Override

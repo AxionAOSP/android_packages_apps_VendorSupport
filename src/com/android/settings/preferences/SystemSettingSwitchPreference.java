@@ -46,10 +46,6 @@ public class SystemSettingSwitchPreference extends SelfRemovingSwitchPreference 
 
     private void init(Context context, AttributeSet attrs) {
         isLineageSettings = AdaptivePreferenceUtils.isLineageSettings(context, attrs);
-        int layoutRes = AdaptivePreferenceUtils.getLayoutResourceId(context, attrs);
-        if (layoutRes != -1) {
-            setLayoutResource(layoutRes);
-        }
     }
 
     @Override

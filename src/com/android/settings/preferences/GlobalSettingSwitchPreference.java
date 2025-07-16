@@ -19,32 +19,20 @@ import android.content.Context;
 import android.provider.Settings;
 import android.util.AttributeSet;
 
-import com.android.settings.utils.AdaptivePreferenceUtils;
-
 import lineageos.preference.SelfRemovingSwitchPreference;
 
 public class GlobalSettingSwitchPreference extends SelfRemovingSwitchPreference {
 
     public GlobalSettingSwitchPreference(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
-        init(context, attrs);
     }
 
     public GlobalSettingSwitchPreference(Context context, AttributeSet attrs) {
         super(context, attrs);
-        init(context, attrs);
     }
 
     public GlobalSettingSwitchPreference(Context context) {
         super(context);
-        init(context, null);
-    }
-
-    private void init(Context context, AttributeSet attrs) {
-        int layoutRes = AdaptivePreferenceUtils.getLayoutResourceId(context, attrs);
-        if (layoutRes != -1) {
-            setLayoutResource(layoutRes);
-        }
     }
 
     @Override

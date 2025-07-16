@@ -52,10 +52,6 @@ public class SecureSettingListPreference extends ListPreference {
                         ? new LineageSecureSettingsStore(context.getContentResolver())
                         : new SecureSettingsStore(context.getContentResolver());
         setPreferenceDataStore(dataStore);
-        int layoutRes = AdaptivePreferenceUtils.getLayoutResourceId(context, attrs);
-        if (layoutRes != -1) {
-            setLayoutResource(layoutRes);
-        }
     }
 
     @Override
