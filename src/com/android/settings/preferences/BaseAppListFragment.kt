@@ -26,9 +26,12 @@ import android.os.CancellationSignal
 import android.os.UserHandle
 import android.provider.Settings
 import android.util.Log
+import android.view.View
 import androidx.preference.*
 import com.android.settings.R
 import java.util.concurrent.Executor
+import androidx.lifecycle.lifecycleScope
+import kotlinx.coroutines.*
 
 abstract class BaseAppListFragment : PreferenceFragmentCompat() {
 
@@ -51,10 +54,18 @@ abstract class BaseAppListFragment : PreferenceFragmentCompat() {
         } else {
             preferenceScreen = preferenceManager.createPreferenceScreen(requireContext())
         }
+    }
+    
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
         if (requiresSecureAuthentication() && !isAuthenticated) {
             showSecureAuthenticationPrompt()
         } else {
             initializePreferences()
+            viewLifecycleOwner.lifecycleScope.launchWhenStarted {
+                onPreferenceReady()
+            }
         }
     }
 
@@ -62,6 +73,10 @@ abstract class BaseAppListFragment : PreferenceFragmentCompat() {
         super.onResume()
         if (requiresSecureAuthentication() && !isAuthenticated) {
             showSecureAuthenticationPrompt()
+        } else {
+            viewLifecycleOwner.lifecycleScope.launchWhenStarted {
+                onPreferenceReady()
+            }
         }
     }
 
@@ -110,6 +125,7 @@ abstract class BaseAppListFragment : PreferenceFragmentCompat() {
                 cancellationSignal = null
                 isAuthenticated = true
                 initializePreferences()
+                viewLifecycleOwner.lifecycleScope.launchWhenStarted { onPreferenceReady() }
             }
             override fun onAuthenticationFailed() {
                 super.onAuthenticationFailed()
@@ -304,7 +320,7 @@ abstract class BaseAppListFragment : PreferenceFragmentCompat() {
             ?: emptySet()
     }
 
-    private fun onCollectChanges() {
+    open fun onCollectChanges() {
         val value = selectedPackages.joinToString(",")
         try {
             Settings.Secure.putStringForUser(
@@ -316,6 +332,9 @@ abstract class BaseAppListFragment : PreferenceFragmentCompat() {
         } catch (e: Exception) {
             Log.e("BaseAppListFragment", "Failed to save to Settings.Secure", e)
         }
+    }
+
+    protected open fun onPreferenceReady() { 
     }
 
     protected abstract fun getSettingsKey(): String
