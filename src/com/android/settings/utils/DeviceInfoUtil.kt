@@ -49,19 +49,14 @@ object DeviceInfoUtil {
   fun getTotalRam(): String {
     val memInfoReader = MemInfoReader()
     memInfoReader.readMemInfo()
-    val totalMemoryBytes = memInfoReader.totalSize
-    val totalMemoryGB = totalMemoryBytes / (1024.0 * 1024.0 * 1024.0)
-    val roundedMemoryGB = roundToNearestKnownRamSize(totalMemoryGB)
-    return "$roundedMemoryGB GB"
-  }
 
-  private fun roundToNearestKnownRamSize(memoryGB: Double): Int {
-    val knownSizes = arrayOf(1, 2, 3, 4, 6, 8, 10, 12, 16, 32, 48, 64)
-    if (memoryGB <= 0) return 1
-    for (size in knownSizes) {
-      if (memoryGB <= size) return size
-    }
-    return knownSizes.last()
+    // Use decimal GB (1 GB = 1,000,000,000 bytes) for RAM as per common marketing practice
+    val totalMemoryBytes = memInfoReader.totalSize
+    val totalMemoryGB = totalMemoryBytes / (1000.0 * 1000.0 * 1000.0)
+
+    // Round to the nearest whole GB
+    val rounded = totalMemoryGB.roundToInt().coerceAtLeast(1)
+    return "$rounded GB"
   }
 
   fun getStorageTotal(context: Context): String {
