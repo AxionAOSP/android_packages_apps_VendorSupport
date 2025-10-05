@@ -163,11 +163,13 @@ fun <T> DragAndDropGrid(
     height: (T) -> Dp,
     onReorder: (List<T>) -> Unit,
     spacing: Dp = 0.dp,
-    modifier: Modifier = Modifier.fillMaxWidth().padding(horizontal = spacing / 2),
+    modifier: Modifier = Modifier.fillMaxWidth().padding(horizontal = spacing),
+    maxCount: Int = 4,
     content: @Composable (item: T) -> Unit
 ) {
     val ds = rememberDragState(items)
     val density = LocalDensity.current
+    var containerWidthPx by remember { mutableStateOf(0f) }
 
     LaunchedEffect(items) {
         if (ds.dragItem == null) {
@@ -176,18 +178,34 @@ fun <T> DragAndDropGrid(
         }
     }
 
-    Box(modifier = modifier) {
+    Box(
+        modifier = modifier.onGloballyPositioned { coords ->
+            containerWidthPx = coords.size.width.toFloat()
+        },
+        contentAlignment = Alignment.CenterStart
+    ) {
+        if (containerWidthPx == 0f) return@Box
+        
+        val item = items.firstOrNull() ?: return@Box
+
+        val baseWidth = with(density) { width(item).toPx() } / span(item)
+        
+        var space = (containerWidthPx - (baseWidth * maxCount)) / (maxCount - 1) 
+
         items.forEach { item ->
             key(item) {
                 val itemWidth = width(item)
                 val itemHeight = height(item)
+                val span = span(item)
 
-                LaunchedEffect(item, itemWidth, itemHeight, spacing) {
+                val itemSpacing = space * span.toFloat()
+
+                LaunchedEffect(item, itemWidth, itemHeight, itemSpacing) {
                     val info = ItemInfo(
-                        span = span(item),
+                        span = span,
                         width = with(density) { itemWidth.toPx() },
                         height = with(density) { itemHeight.toPx() },
-                        spacing = with(density) { spacing.toPx() },
+                        spacing = itemSpacing,
                         index = items.indexOf(item)
                     )
                     ds.info(item, info)
