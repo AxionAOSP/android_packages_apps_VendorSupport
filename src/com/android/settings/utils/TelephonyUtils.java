@@ -190,8 +190,7 @@ public class TelephonyUtils {
     }
 
     private static boolean isLteOnCdma(Context context, int subId) {
-        return TelephonyManager.from(context).getLteOnCdmaMode(subId)
-                == PhoneConstants.LTE_ON_CDMA_TRUE;
+        return false;
     }
 
     private static boolean isWorldMode(Context context) {
