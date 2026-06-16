@@ -42,7 +42,7 @@ object DeviceInfoUtil {
       7 -> "Google Tensor G2"
       8 -> "Google Tensor G3"
       9 -> "Google Tensor G4"
-      else -> SystemProperties.get("persist.sys.axion_processor_info", "Unknown").replace("_", " ")
+      else -> SystemProperties.get("persist.sys.axion_cpu_info", "Unknown").replace("_", " ")
     }
   }
 
